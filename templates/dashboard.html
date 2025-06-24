@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Expense Tracker - Dashboard</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);
+      margin: 0;
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: white;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 2.8rem;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    form.glass-form {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 30px 40px;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 50px;
+    }
+
+    form.glass-form input,
+    form.glass-form button {
+      flex: 1 1 200px;
+      padding: 14px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    form.glass-form input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    form.glass-form input:hover,
+    form.glass-form input:focus {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateX(5px);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+
+    form.glass-form button {
+      background-color: #ffffff;
+      color: #5e17eb;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 1 1 100%;
+      margin-top: 10px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    form.glass-form button:hover {
+      background-color: #e8e8e8;
+      transform: scale(1.02);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(12px);
+    }
+
+    thead {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    thead th {
+      padding: 14px 10px;
+      color: #2d1a78;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      transition: background-color 0.3s ease;
+      cursor: default;
+    }
+
+    tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    tbody td {
+      padding: 12px 10px;
+      font-size: 1rem;
+      color: white;
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 30px;
+      text-decoration: underline;
+    }
+
+    .logout-btn:hover {
+      color: #b490ca;
+    }
+
+    /* Totals styles */
+    .totals-container {
+      margin-bottom: 30px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .totals-container h3 {
+      display: inline-block;
+      margin: 0 40px;
+      text-decoration: underline;
+      transition: color 0.3s ease;
+    }
+    .totals-container h3:hover {
+      color: #d9b8ff;
+    }
+
+    /* Charts container */
+    .charts-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .chart-box {
+      width: 350px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(12px);
+      color: white;
+      text-align: center;
+    }
+
+    @media (max-width: 650px) {
+      form.glass-form {
+        flex-direction: column;
+      }
+      form.glass-form input, form.glass-form button {
+        flex: 1 1 100%;
+      }
+      .charts-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="logout-btn" onclick='window.location.href="{{ url_for("logout") }}"'>Logout</button>
+    <header>Welcome, {{ user }}!</header>
+
+    <form class="glass-form" method="POST">
+      <input type="number" step="0.01" name="amount" placeholder="Amount" required />
+      <input type="text" name="category" placeholder="Category" required />
+      <input type="text" name="description" placeholder="Description" />
+      <input type="date" name="date" required />
+      <button type="submit">Add Expense</button>
+    </form>
+
+    <!-- Expenses Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for expense in expenses %}
+        <tr>
+          <td>{{ expense['date'] }}</td>
+          <td>{{ expense['category'] }}</td>
+          <td>{{ expense['description'] }}</td>
+          <td>{{ expense['amount'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Totals Display Below Table -->
+    <div class="totals-container" style="margin-top:30px;">
+      <h3 id="monthlyTotal">Monthly Total Expense: ₹{{ monthly_total or 0 }}</h3>
+      <h3 id="annualTotal">Annual Total Expense: ₹{{ annual_total or 0 }}</h3>
+    </div>
+
+    <!-- Download Annual Report PDF link -->
+    <div style="text-align:center; margin-bottom:30px;">
+      <a href="{{ url_for('download_annual_report_pdf') }}" 
+         style="color: white; text-decoration: underline; cursor: pointer;">
+        Download Annual Report PDF
+      </a>
+    </div>
+
+    <!-- Charts container (hidden initially) -->
+    <div class="charts-container" style="display:none;">
+      <div class="chart-box" id="monthlyChartBox" style="display:none;">
+        <h4>Monthly Expenses by Category</h4>
+        <canvas id="monthlyChart"></canvas>
+      </div>
+      <div class="chart-box" id="annualChartBox" style="display:none;">
+        <h4>Annual Expenses by Category</h4>
+        <canvas id="annualChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    const monthlyTotal = document.getElementById('monthlyTotal');
+    const annualTotal = document.getElementById('annualTotal');
+    const chartsContainer = document.querySelector('.charts-container');
+    const monthlyChartBox = document.getElementById('monthlyChartBox');
+    const annualChartBox = document.getElementById('annualChartBox');
+
+    let monthlyChart, annualChart;
+
+    function createMonthlyChart() {
+      const ctx = document.getElementById('monthlyChart').getContext('2d');
+      if (monthlyChart) monthlyChart.destroy();
+      monthlyChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: {{ monthly_categories | tojson }},
+          datasets: [{
+            label: 'Amount',
+            data: {{ monthly_amounts | tojson }},
+            backgroundColor: [
+              'rgba(94, 23, 235, 0.7)',
+              'rgba(123, 31, 162, 0.7)',
+              'rgba(156, 39, 176, 0.7)',
+              'rgba(186, 104, 200, 0.7)',
+              'rgba(216, 191, 216, 0.7)'
+            ],
+            borderColor: 'rgba(94, 23, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { labels: { color: 'white' } }
+          }
+        }
+      });
+    }
+
+    function createAnnualChart() {
+      const ctx = document.getElementById('annualChart').getContext('2d');
+      if (annualChart) annualChart.destroy();
+      annualChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: {{ annual_categories | tojson }},
+          datasets: [{
+            label: 'Amount',
+            data: {{ annual_amounts | tojson }},
+            backgroundColor: [
+              'rgba(180, 144, 202, 0.7)',
+              'rgba(155, 89, 182, 0.7)',
+              'rgba(142, 68, 173, 0.7)',
+              'rgba(187, 143, 206, 0.7)',
+              'rgba(218, 165, 32, 0.7)'
+            ],
+            borderColor: 'rgba(180, 144, 202, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { labels: { color: 'white' } }
+          }
+        }
+      });
+    }
+
+    monthlyTotal.addEventListener('click', () => {
+      chartsContainer.style.display = 'flex';
+      monthlyChartBox.style.display = 'block';
+      annualChartBox.style.display = 'none';
+      createMonthlyChart();
+    });
+
+    annualTotal.addEventListener('click', () => {
+      chartsContainer.style.display = 'flex';
+      annualChartBox.style.display = 'block';
+      monthlyChartBox.style.display = 'none';
+      createAnnualChart();
+    });
+  </script>
+</body>
+</html>

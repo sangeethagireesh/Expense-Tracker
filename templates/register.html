@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register | Expense Tracker</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet" />
+
+  <style>
+  * {
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .glass-box {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 40px;
+    width: 340px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(12px);
+    color: white;
+    text-align: center;
+  }
+
+  .glass-box h2 {
+    margin-bottom: 30px;
+    font-size: 34px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 12px;
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    transform: translateX(0);
+  }
+
+  input:hover, input:focus {
+    background-color: rgba(255,255,255,0.3);
+    transform: translateX(5px);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    outline: none;
+  }
+
+  input::placeholder {
+    color: rgba(255,255,255,0.7);
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #ffffff;
+    color: #5e17eb;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #e8e8e8;
+    transform: scale(1.02);
+  }
+
+  .error {
+    color: #ffcccc;
+    margin-top: 10px;
+  }
+
+  .login-link {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .login-link a {
+    color: #ffffff;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .login-link a:hover {
+    color: #b490ca;
+  }
+  </style>
+</head>
+<body>
+  <div class="glass-box">
+    <h2>Create Account</h2>
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+    <form method="POST">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="password" name="confirm_password" placeholder="Confirm Password" required />
+      <button type="submit">Register</button>
+    </form>
+
+    <div class="login-link">
+      Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+    </div>
+  </div>
+</body>
+</html>
